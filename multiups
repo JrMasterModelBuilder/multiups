@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import re
+import sys
+from html.parser import HTMLParser
+from urllib.parse import urljoin, urlparse
+from urllib.request import Request, urlopen
+
+VERSION = '0.0.0'
+
+class Page(HTMLParser):
+	MATCH_FILE = re.compile(r'^/ Mirror list (.*) \(([^)]+)\)$', re.IGNORECASE)
+
+	def __init__(self, url: str, *, convert_charrefs: bool = True) -> None:
+		super().__init__(convert_charrefs=convert_charrefs)
+		self.url = url
+		self.target = ''
+		self.file = '?'
+		self.size = '?'
+		self.links: list[str] = []
+
+	def handle_starttag(self, tag: str, attrs: list[tuple[str, str]]) -> None:
+		if tag == 'button':
+			for k, v in attrs:
+				if k == 'link' and v:
+					self.links.append(urljoin(self.url, v))
+					break
+		elif tag == 'form':
+			target = urljoin(self.url, dict(attrs).get('action', ''))
+			if urlparse(self.url).hostname == urlparse(target).hostname:
+				self.target = target
+
+	def handle_data(self, data: str):
+		m = self.MATCH_FILE.search(data.strip())
+		if m:
+			self.file = m[1]
+			self.size = m[2].strip()
+
+class Main(object):
+	def __init__(self, options: argparse.Namespace):
+		self.url = str(options.url[0])
+
+		user_agent = options.user_agent
+		if user_agent is None:
+			user_agent = 'Mozilla/5.0'
+
+		self.headers = {
+			'Accept': ','.join([
+				'text/html',
+				'application/xhtml+xml',
+				'application/xml;q=0.9',
+				'image/avif',
+				'image/webp',
+				'*/*;q=0.8'
+			]),
+			'Accept-Language': 'en-US,en;q=0.5',
+			'User-Agent': user_agent
+		}
+
+	def main(self) -> int:
+		with urlopen(Request(self.url, headers=self.headers)) as res:
+			page = Page(res.url)
+			page.feed(res.read().decode('utf8'))
+
+		if not page.links and page.target:
+			with urlopen(Request(page.target, headers=self.headers)) as res:
+				page = Page(res.url)
+				page.feed(res.read().decode('utf8'))
+
+		if not page.links:
+			raise Exception('No links found on the page')
+
+		print(f'{page.file} | {page.size}')
+		for link in page.links:
+			print(link)
+
+		return 0
+
+def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument(
+		'-v',
+		'--version',
+		action='version',
+		version=VERSION
+	)
+	parser.add_argument(
+		'-A',
+		'--user-agent',
+		action='store',
+		type=str,
+		help='user agent (overrides MULTIUPS_USER_AGENT)',
+		default=os.getenv('MULTIUPS_USER_AGENT')
+	)
+	parser.add_argument(
+		'url',
+		nargs=1,
+		help='url to fetch mirror links from'
+	)
+	return Main(parser.parse_args()).main()
+
+if __name__ == '__main__':
+	sys.exit(main())
