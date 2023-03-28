@@ -14,12 +14,12 @@ anon='https://anonfiles.com/h4kbz4h6z1/jmmb_avatar_png'
 expt="${info}"$'\n'"${anon}"
 multiups="$(dirname "${__dir}")/multiups"
 
-echo "Running..."
-output="$("${multiups}" "${murl}" 2>&1)"
-echo "Output:"
+code=0
+output="$("${multiups}" "${murl}")" || code="$?"
+echo "Status ${code}:"
 echo "${output}"
 
-if [[ "${output}" == "${expt}" ]]; then
+if [[ "${code}" == 0 && "${output}" == "${expt}" ]]; then
 	echo 'PASS'
 else
 	echo 'FAIL'
