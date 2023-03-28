@@ -14,7 +14,9 @@ anon='https://anonfiles.com/h4kbz4h6z1/jmmb_avatar_png'
 expt="${info}"$'\n'"${anon}"
 multiups="$(dirname "${__dir}")/multiups"
 
+echo "Running..."
 output="$("${multiups}" "${murl}" 2>&1)"
+echo "Output:"
 echo "${output}"
 
 if [[ "${output}" == "${expt}" ]]; then
