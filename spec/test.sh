@@ -7,21 +7,45 @@ __self="${BASH_SOURCE[0]}"
 __dir="$(cd "$(dirname "${__self}")" > /dev/null && pwd)"
 __file="${__dir}/$(basename "${__self}")"
 
-murl='https://multiup.org/e079978b475462b327d5880d8cbb63d0'
+murl='https://multiup.org/02722133a3bd3d34c4384096c5c3edaa'
 info='jmmb_avatar.png | 12.96 kB'
-anon='https://anonfiles.com/h4kbz4h6z1/jmmb_avatar_png'
-
-expt="${info}"$'\n'"${anon}"
+urls=(
+	'https://download.gg/file-15651688_a1d4db3a9f6e6848'
+	'https://gofile.io/d/tC8bSQ'
+	'https://doodrive.com/f/4qx8nx'
+	'https://mixdrop.co/f/7ren811obov3kg'
+	'https://uptobox.com/9a2hsrq30ubp'
+	'https://1fichier.com/?v3zfxfgj4a6gnz52b3b6&af=62851'
+)
 multiups="$(dirname "${__dir}")/multiups"
 
 code=0
 output="$("${multiups}" "${murl}")" || code="$?"
-echo "Status ${code}:"
+echo "Status: ${code}"
 echo "${output}"
 
-if [[ "${code}" == 0 && "${output}" == "${expt}" ]]; then
-	echo 'PASS'
-else
-	echo 'FAIL'
+fail=0
+
+if [[ "${code}" != 0 ]]; then
+	echo 'FAIL: code'
+	fail=1
+fi
+
+if [[ "${output}" != *"${info}"* ]]; then
+	echo 'FAIL: info'
+	fail=1
+fi
+
+for url in "${urls[@]}"; do
+	if [[ "${output}" != *"${url}"* ]]; then
+		echo "FAIL: ${url}"
+		fail=1
+	fi
+done
+
+if [[ "${fail}" == 1 ]]; then
+	echo 'FAILED'
 	exit 1
+else
+	echo 'PASSED'
 fi
