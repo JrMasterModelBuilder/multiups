@@ -22,7 +22,7 @@ class Page(HTMLParser):
 		self.links: list[str] = []
 
 	def handle_starttag(self, tag: str, attrs: list[tuple[str, str]]) -> None:
-		if tag == 'button':
+		if tag in {'a', 'button'}:
 			for k, v in attrs:
 				if k == 'link' and v:
 					self.links.append(urljoin(self.url, v))
