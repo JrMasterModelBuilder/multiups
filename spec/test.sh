@@ -14,7 +14,6 @@ urls=(
 	'https://gofile.io/d/tC8bSQ'
 	'https://doodrive.com/f/4qx8nx'
 	'https://mixdrop.co/f/7ren811obov3kg'
-	'https://uptobox.com/9a2hsrq30ubp'
 	'https://1fichier.com/?v3zfxfgj4a6gnz52b3b6&af=62851'
 )
 multiups="$(dirname "${__dir}")/multiups"
