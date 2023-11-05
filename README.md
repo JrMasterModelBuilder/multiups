@@ -2,7 +2,7 @@
 
 MultiUp mirror list extractor
 
-[![Build Status](https://github.com/JrMasterModelBuilder/multiups/workflows/main/badge.svg?branch=main)](https://github.com/JrMasterModelBuilder/multiups/actions?query=workflow%3Amain+branch%3Amain)
+[![Build Status](https://github.com/JrMasterModelBuilder/multiups/workflows/main/badge.svg)](https://github.com/JrMasterModelBuilder/multiups/actions?query=workflow%3Amain+branch%3Amain)
 
 # Overview
 
