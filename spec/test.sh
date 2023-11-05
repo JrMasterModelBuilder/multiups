@@ -13,7 +13,6 @@ urls=(
 	'https://download.gg/file-15651688_a1d4db3a9f6e6848'
 	'https://gofile.io/d/tC8bSQ'
 	'https://doodrive.com/f/4qx8nx'
-	'https://mixdrop.co/f/7ren811obov3kg'
 	'https://1fichier.com/?v3zfxfgj4a6gnz52b3b6&af=62851'
 )
 multiups="$(dirname "${__dir}")/multiups"
